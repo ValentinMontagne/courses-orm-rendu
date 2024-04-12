@@ -13,13 +13,13 @@ export async function findAllMonsters(){
     return findAll();
   }
 
-export async function findMonsterById(id: string){
+export async function findMonsterById(id: string): Promise<Monster>{
     const monsterId = parseInt(id);
     const existingMonster = await findById(monsterId);
     if (!existingMonster) {
         throw new HttpNotFound("Monstre non trouvé.");
       }
-    return existingMonster;
+    return existingMonster[0];
 }
 
 export async function updateMonster(id: string, data: Partial<Monster>){

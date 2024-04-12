@@ -19,7 +19,7 @@ export async function findCharacterById(id: string){
     if (!existingCharacter) {
         throw new HttpNotFound("Personnage non trouvé.");
       }
-    return existingCharacter;
+    return existingCharacter[0];
 }
 
 export async function updateCharacter(id: string, data: Partial<Character>){

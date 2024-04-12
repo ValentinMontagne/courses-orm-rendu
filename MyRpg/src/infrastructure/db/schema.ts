@@ -10,8 +10,8 @@ export const characters = pgTable("characters", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     xp: integer("xp").notNull(),
-    classId: serial("classId").notNull(),
-    playerId: serial("playerId").notNull(),
+    classId: serial("classId").references(() => classes.id).notNull(),
+    playerId: serial("playerId").references(() => players.id).notNull(),
   });
 
 export const classes = pgTable("classes", {

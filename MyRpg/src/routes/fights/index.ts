@@ -1,61 +1,88 @@
-import { Router, Request, Response } from "express";
-import { createFight, findAllFights, findFightById, updateFight, deleteFight } from "../../lib/fight/fight.service";
-import { ZodError } from "zod";
+import {Router, Request, Response} from "express";
+import {ZodError} from "zod";
+
+import {errorFormatObject, utilsErr} from "../../utilsErr";
+import {
+    attackFightById,
+    createFight,
+    deleteFightById,
+    getAllFight,
+    getFightById,
+    updateFightById
+} from "../../lib/fight/fight.service";
 
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
     try {
-        const fights = await findAllFights(); // Utilisez la méthode findAll() de votre ORM pour récupérer tous les personnages
-        res.json(fights); // Renvoyez les personnages sous forme de JSON
-      } catch (error) {
-        res.status(500).json({ error: "Une erreur s'est produite lors de la récupération des personnages." });
-      }
+        const fights = await getAllFight();
+        res.json(fights);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
+    const fightID: number = parseInt(req.params.id);
     try {
-        const fight = await findFightById(req.params.id); // Utilisez la méthode findAll() de votre ORM pour récupérer tous les joueurs
-        res.json(fight); // Renvoyez les joueurs sous forme de JSON
-      } catch (error) {
-        res.status(500).json({ error: "Une erreur s'est produite lors de la récupération du personnage." });
-      }
+        const fight = await getFightById(fightID);
+        if (!fight) {
+            res.sendStatus(404);
+        }
+        res.json(fight);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
 });
+
 
 router.post("/", async (req: Request, res: Response) => {
     try {
-      const fight = await createFight(req.body);
-  
-      res.json(fight);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        res.status(400).json(err);
-        return;
-      }
-      console.error(err);
-      res.sendStatus(500);
-    }
-  });
+        const fight = await createFight(req.body);
 
-  router.patch("/:id", async (req: Request, res: Response) => {
-    const fightId = req.params.id;
-    const fightData = req.body;
+        res.json(fight);
+    } catch (err) {
+        if (err instanceof ZodError) {
+            res.status(400).json(err);
+            return;
+        }
+        console.error(err);
+        res.sendStatus(500);
+    }
+});
+router.put("/:id/attack", async (req: Request, res: Response) => {
+    const fightID: number = parseInt(req.params.id);
     try {
-      const updatedFight = await updateFight(fightId, fightData);
-      res.json(updatedFight);
-    } catch (error) {
-      res.status(500).json({ error: "Une erreur s'est produite lors de la mise à jour du personnage." });
+        const fight = await attackFightById(fightID ,req.body);
+        res.json(fight);
+    } catch (err) {
+        const data: errorFormatObject = utilsErr(err)
+        res.status(data.code).json({ message: data.message });
+    }
+});
+
+router.put("/:id", async (req: Request, res: Response) => {
+    const fightID: number = parseInt(req.params.id);
+    try {
+        const fight = await updateFightById(fightID ,req.body);
+        res.json(fight);
+    } catch (err) {
+        const data: errorFormatObject = utilsErr(err)
+        res.status(data.code).json({ message: data.message });
     }
 });
 
 router.delete("/:id", async (req: Request, res: Response) => {
-    const fightId = req.params.id;
-  try {
-    const deletedFight = await deleteFight(fightId);
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(500).json({ error: "Une erreur s'est produite lors de la suppression du personnage." });
-  }
+    const fightId: number = parseInt(req.params.id);
+    try {
+        const fight = await deleteFightById(fightId);
+        res.json(fight);
+    } catch (err) {
+        const data: errorFormatObject = utilsErr(err)
+        res.status(data.code).json({message: data.message});
+    }
 });
 
 export const fightsRouter = router;

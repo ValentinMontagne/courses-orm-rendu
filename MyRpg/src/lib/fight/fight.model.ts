@@ -15,9 +15,14 @@ export const FightSchema = z.object({
     monsterActions  : z.array(z.string()),
     status  : z.enum(["IN_PROGRESS", "PLAYER_WON","MONSTERS_WON"]),
 });
+
+export interface attackModel{
+    currentActions : string,
+}
 export type Fight = typeof fights.$inferSelect;
 
-export const CreateFightSchema = FightSchema.omit({ id: true });
-export const UpdateFightSchema = FightSchema.omit({ id: true });
+export const CreateFightSchema = FightSchema.omit({ id: true , turn: true, charactersHP: true, monstersHP: true, playerActions: true, monsterActions: true, status: true});
+export const NoIdFightSchema = FightSchema.omit({ id: true });
 export type CreateFight = z.infer<typeof CreateFightSchema>;
-export type UpdateFight = z.infer<typeof UpdateFightSchema>;
+export type UpdateFight = z.infer<typeof NoIdFightSchema>;
+export type NoIdFight = z.infer<typeof NoIdFightSchema>;
