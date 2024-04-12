@@ -10,8 +10,12 @@ export const characters = pgTable("characters", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   xp: integer("xp").notNull(),
-  classId: integer("classId").notNull().references(() => classes.id),
-  playerId: integer("playerId").notNull().references(() => players.id),
+  classId: integer("classId")
+    .notNull()
+    .references(() => classes.id),
+  playerId: integer("playerId")
+    .notNull()
+    .references(() => players.id),
 });
 
 export const classes = pgTable("classes", {
@@ -28,15 +32,18 @@ export const monsters = pgTable("monsters", {
   hp: integer("hp").notNull(),
 });
 
+export const currentTurnEnum = pgEnum('currentTurn', ['PLAYER', 'MONSTER']);
+export const statusEnum = pgEnum('status', ['IN_PROGRESS', 'PLAYER_WON', 'MONSTERS_WON']);
+
 export const fights = pgTable("fights", {
-  playerId: integer("playerId").notNull().references(() => players.id),
-  characterIds: array("characterIds").notNull(),
-  monsterIds: array("monsterIds").notNull(),
-  currentTurn: pgEnum("currentTurn", ["PLAYER", "MONSTER"]).notNull(),
-  turn: integer("turn").notNull().default(0),
+  id: serial("id").primaryKey(),
+  playerId: integer("playerId").notNull(),
+  characterIds: integer("characterIds").notNull(), // a modifier
+  monsterIds: integer("monsterIds").notNull(),// a modifier
+  currentTurn: currentTurnEnum("currentTurn"),
   charactersHP: integer("charactersHP").notNull(),
   monstersHP: integer("monstersHP").notNull(),
-  playerActions: array("playerActions").notNull(),
-  monsterActions: array("monsterActions").notNull(),
-  status: pgEnum("status", ["IN_PROGRESS", "PLAYER_WON", "MONSTERS_WON"]).notNull(),
+  playerActions: text("playerActions").notNull(), // a modifier
+  monsterActions: text("monsterActions").notNull(),// a modifier
+  status: statusEnum("status"),
 });

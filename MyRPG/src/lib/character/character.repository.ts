@@ -8,17 +8,31 @@ export function createCharacterInRepository(data: CreateCharacter) {
   return db.insert(characters).values(data).returning();
 }
 
-export function getAllCharactersFromRepository(): Promise<Character[]> {
+export function getAllCharactersFromRepository(): Promise<
+  (Character & Classe)[]
+> {
   return db
     .select()
     .from(characters)
-    .rightJoin(classes, eq(characters.classId, classes.id));
+    .innerJoin(classes, eq(characters.classId, classes.id))
+    .then((result) => result as unknown[])
+    .then((unknownResult) =>
+      unknownResult.map((item) => item as Character & Classe)
+    );
 }
 
 export function getCharacterByIdRepository(
   idCharacter: number
-): Promise<Character[]> {
-  return db.select().from(characters).where(eq(characters.id, idCharacter));
+): Promise<(Character & Classe)[]> {
+  return db
+    .select()
+    .from(characters)
+    .where(eq(characters.id, idCharacter))
+    .innerJoin(classes, eq(characters.classId, classes.id))
+    .then((result) => result as unknown[])
+    .then((unknownResult) =>
+      unknownResult.map((item) => item as Character & Classe)
+    );
 }
 
 export function deleteCharacterInRepository(idCharacters: number) {
