@@ -5,6 +5,8 @@ import { players, characters } from "./infrastructure/db/schema";
 import { playersRouter } from "./routes/players";
 import { charactersRouter } from "./routes/characters"
 import { classesRouter } from "./routes/classes";
+import { monstersRouter } from "./routes/monsters";
+import { fightsRouter } from "./routes/fights";
 
  
 const app = express();
@@ -15,6 +17,8 @@ app.use(express.json());
 app.use("/players", playersRouter);
 app.use("/characters", charactersRouter);
 app.use("/classes", classesRouter);
+app.use("/monsters", monstersRouter);
+app.use("/fights", fightsRouter);
  
 // Create route "/" and send plain text.
 app.get("/", async (req: Request, res: Response) => {

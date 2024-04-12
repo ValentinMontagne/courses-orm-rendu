@@ -1,3 +1,4 @@
+import { HttpBadRequest, HttpNotFound } from "@httpx/exception";
 import { CreatePlayerSchema, Player } from "./player.model";
 import { createPlayerInRepository, deletePlayerById, findAll, findById, updatePlayerById } from "./player.repository";
 
@@ -16,7 +17,7 @@ export async function findPlayerById(id: string){
     const playerId = parseInt(id);
     const existingPlayer = await findById(playerId);
     if (!existingPlayer) {
-        throw new Error("Joueur non trouvé.");
+        throw new HttpNotFound("Joueur non trouvé.");
       }
     return existingPlayer;
 }
@@ -25,11 +26,11 @@ export async function updatePlayer(id: string, data: Partial<Player>){
     const playerId = parseInt(id);
     const existingPlayer = await findPlayerById(id);
     if (!existingPlayer) {
-      throw new Error("Joueur non trouvé.");
+      throw new HttpNotFound("Joueur non trouvé.");
     }
     const updatedPlayer = await updatePlayerById(playerId, data);
     if (!updatedPlayer) {
-      throw new Error("La mise à jour du joueur a échoué.");
+      throw new HttpBadRequest("La mise à jour du joueur a échoué.");
     }
     return updatedPlayer;
 }

@@ -11,6 +11,7 @@
   "author": "Saintenoy Tom",
   "license": "ISC",
   "devDependencies": {
+    "@httpx/exception": "^3.0.5",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.7",
     "@types/pg": "^8.11.5",
